@@ -7,7 +7,6 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-
 @app.route('/', methods=['GET'])
 def verify():
     # when the endpoint is registered as a webhook, it must echo back
@@ -24,11 +23,6 @@ def verify():
 def webhook():
 
     # endpoint for processing incoming messaging events
-
-    set_greeting()
-    set_start()
-    # set_mainscreen()
-
     data = request.get_json()
     log(data)
 
@@ -124,4 +118,7 @@ def log(message):  # simple wrapper for logging to stdout on heroku
 
 
 if __name__ == '__main__':
+    set_greeting()
+    set_start()
+    # set_mainscreen()
     app.run(debug=True)
