@@ -63,7 +63,7 @@ def interpret(rid, s):
                             "message"  : {"text": "got it, thanks!"}
                          })
     return json.dumps(
-        {"recipient": { "id": recipient_id },
+        {"recipient": { "id": rid },
          "message"  : {
                 "attachment":{
                     "type":"template",
