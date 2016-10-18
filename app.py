@@ -25,6 +25,9 @@ def webhook():
 
     # endpoint for processing incoming messaging events
 
+    set_start()
+    # set_mainscreen()
+
     data = request.get_json()
     log(data)
 
@@ -53,6 +56,26 @@ def webhook():
 
     return "ok", 200
 
+def set_start():
+    params = { "access_token": os.environ["PAGE_ACCESS_TOKEN"] }
+    headers = { "Content-Type": "application/json" }
+    data = json.dumps({
+        "setting_type":"call_to_actions",
+        "thread_state":"new_thread",
+        "call_to_actions":[
+            {
+                "payload": "Hola~ How may I help you?"
+            }
+        ]
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/thread_settings", params=params, headers=headers, data=data)
+    log("Displaying response of setting get-started button")
+    log(r)
+    # if r.status_code != 200:
+    #     log(r.status_code)
+    #     log(r.text)
+    # if r.result is not None:
+
 
 def send_message(recipient_id, message_text):
 
@@ -76,7 +99,6 @@ def send_message(recipient_id, message_text):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
-
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
