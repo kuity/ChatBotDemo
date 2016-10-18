@@ -25,6 +25,7 @@ def webhook():
 
     # endpoint for processing incoming messaging events
 
+    set_greeting()
     set_start()
     # set_mainscreen()
 
@@ -55,6 +56,23 @@ def webhook():
                     pass
 
     return "ok", 200
+
+def set_greeting():
+    params = { "access_token": os.environ["PAGE_ACCESS_TOKEN"] }
+    headers = { "Content-Type": "application/json" }
+    data = json.dumps({
+        "setting_type":"greeting",
+        "greeting":{
+            "text":"100 different flavors"
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/thread_settings", params=params, headers=headers, data=data)
+    log("Displaying response of setting get-started button")
+    log(r)
+    # if r.status_code != 200:
+    #     log(r.status_code)
+    #     log(r.text)
+    # if r.result is not None:
 
 def set_start():
     params = { "access_token": os.environ["PAGE_ACCESS_TOKEN"] }
