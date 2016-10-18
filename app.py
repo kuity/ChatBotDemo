@@ -40,14 +40,18 @@ def webhook():
                         message_text = messaging_event["message"]["text"]
                     send_message(sender_id, "got it, thanks!")
 
-                if messaging_event.get("delivery"):  # delivery confirmation
+                if messaging_event.get("delivery"):
                     pass
 
-                if messaging_event.get("optin"):  # optin confirmation
+                if messaging_event.get("optin"):
                     pass
 
-                if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
-                    pass
+                if messaging_event.get("postback"):
+                    sender_id = messaging_event["sender"]["id"]
+                    recipient_id = messaging_event["recipient"]["id"]
+                    payload = messaging_event["postback"]["payload"]
+                    if 'help' in payload:
+                        send_message(sender_id, payload)
 
     return "ok", 200
 
@@ -57,11 +61,10 @@ def set_greeting():
     data = json.dumps({
         "setting_type":"greeting",
         "greeting":{
-            "text":"100 different flavors"
+            "text":"Hi {{user_first_name}}, welcome to Ice Cream Factory's bot"
         }
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/thread_settings", params=params, headers=headers, data=data)
-    log("Displaying response of setting get-started button")
     log(r)
     # if r.status_code != 200:
     #     log(r.status_code)
