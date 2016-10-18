@@ -21,39 +21,76 @@ def verify():
 
 @app.route('/', methods=['POST'])
 def webhook():
-
     # endpoint for processing incoming messaging events
     data = request.get_json()
     log(data)
+    if data["object"] != "page":
+        return "ok", 200
 
-    if data["object"] == "page":
+    for entry in data["entry"]:
+        for messaging_event in entry["messaging"]:
+            if messaging_event.get("message"):
+                sender_id = messaging_event["sender"]["id"]
+                #recipient_id = messaging_event["recipient"]["id"]
+                message_text = ''
+                if "text" in messaging_event["message"]:
+                    message_text = messaging_event["message"]["text"]
+                    response = interpret(sender_id, message_text)
+                else:
+                    response = gen_text_resp(sender_id, "Sorry, I don't understand.")
+                send_message(response)
 
-        for entry in data["entry"]:
-            for messaging_event in entry["messaging"]:
+            if messaging_event.get("delivery"):
+                pass
 
-                if messaging_event.get("message"):
+            if messaging_event.get("optin"):
+                pass
 
-                    sender_id = messaging_event["sender"]["id"]
-                    recipient_id = messaging_event["recipient"]["id"]
-                    message_text = ''
-                    if "text" in messaging_event["message"]:
-                        message_text = messaging_event["message"]["text"]
-                    send_message(sender_id, "got it, thanks!")
-
-                if messaging_event.get("delivery"):
-                    pass
-
-                if messaging_event.get("optin"):
-                    pass
-
-                if messaging_event.get("postback"):
-                    sender_id = messaging_event["sender"]["id"]
-                    recipient_id = messaging_event["recipient"]["id"]
-                    payload = messaging_event["postback"]["payload"]
-                    if 'help' in payload:
-                        send_message(sender_id, payload)
+            if messaging_event.get("postback"):
+                sender_id = messaging_event["sender"]["id"]
+                payload = messaging_event["postback"]["payload"]
+                if 'help' in payload:
+                    response = gen_text_resp(sender_id,payload)
+                    send_message(response)
 
     return "ok", 200
+
+# 
+# 
+def interpret(rid, s):
+    if "buy" not in s:
+        return json.dumps({ "recipient": { "id": rid },
+                            "message"  : {"text": "got it, thanks!"}
+                         })
+    return json.dumps(
+        {"recipient": { "id": recipient_id },
+         "message"  : {
+                "attachment":{
+                    "type":"template",
+                    "payload":{
+                        "template_type":"button",
+                        "text":"What do you want to buy?",
+                        "buttons":[
+                            {
+                              "type":"web_url",
+                              "url":"https://haagendazs.com.sg/flavours/vanilla",
+                              "title":"Vanilla Ice Cream"
+                            },
+                            {
+                              "type":"web_url",
+                              "url":"https://haagendazs.com.sg/flavours/chocolate-ice-cream",
+                              "title":"Chocolate Ice Cream"
+                            }
+                        ]
+                    }
+                }
+            }
+        })
+
+def gen_text_resp(rid, text):
+    return json.dumps({ "recipient": { "id": rid },
+                        "message"  : {"text": text}
+                      })
 
 def set_greeting():
     params = { "access_token": os.environ["PAGE_ACCESS_TOKEN"] }
@@ -91,26 +128,13 @@ def set_start():
     #     log(r.text)
     # if r.result is not None:
 
-
-def send_message(recipient_id, message_text):
-
-    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
-
-    params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "text": message_text
-        }
-    })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+def send_message(d):
+    #log("sending message to {recipient}".format(recipient=recipient_id))
+    params = { "access_token": os.environ["PAGE_ACCESS_TOKEN"] }
+    headers = { "Content-Type": "application/json" }
+    data = d
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", 
+                    params=params, headers=headers, data=data)
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
@@ -119,9 +143,8 @@ def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
     sys.stdout.flush()
 
-
 if __name__ == '__main__':
-    set_greeting()
+    # set_greeting()
     set_start()
     # set_mainscreen()
     app.run(debug=True)
