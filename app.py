@@ -1,9 +1,11 @@
+from __future__ import print_function
 import os
 import sys
 import json
 
 import requests
 from flask import Flask, request
+import icbot
 
 app = Flask(__name__)
 
@@ -31,7 +33,6 @@ def webhook():
         for messaging_event in entry["messaging"]:
             if messaging_event.get("message"):
                 sender_id = messaging_event["sender"]["id"]
-                #recipient_id = messaging_event["recipient"]["id"]
                 message_text = ''
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
@@ -55,8 +56,6 @@ def webhook():
 
     return "ok", 200
 
-# 
-# 
 def interpret(rid, s):
     if "buy" not in s:
         return json.dumps({ "recipient": { "id": rid },
@@ -103,10 +102,6 @@ def set_greeting():
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/thread_settings", params=params, headers=headers, data=data)
     log(r)
-    # if r.status_code != 200:
-    #     log(r.status_code)
-    #     log(r.text)
-    # if r.result is not None:
 
 def set_start():
     params = { "access_token": os.environ["PAGE_ACCESS_TOKEN"] }
@@ -123,13 +118,8 @@ def set_start():
     r = requests.post("https://graph.facebook.com/v2.6/me/thread_settings", params=params, headers=headers, data=data)
     log("Displaying response of setting get-started button")
     log(r)
-    # if r.status_code != 200:
-    #     log(r.status_code)
-    #     log(r.text)
-    # if r.result is not None:
 
 def send_message(d):
-    #log("sending message to {recipient}".format(recipient=recipient_id))
     params = { "access_token": os.environ["PAGE_ACCESS_TOKEN"] }
     headers = { "Content-Type": "application/json" }
     data = d
@@ -140,11 +130,9 @@ def send_message(d):
         log(r.text)
 
 def log(message):  # simple wrapper for logging to stdout on heroku
-    print str(message)
+    print(str(message))
     sys.stdout.flush()
 
 if __name__ == '__main__':
-    # set_greeting()
     set_start()
-    # set_mainscreen()
     app.run(debug=True)
