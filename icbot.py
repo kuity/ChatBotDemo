@@ -11,14 +11,15 @@ def preprocess_text(text):
 def check_for_greeting(sentence):
     """If any of the words in the user's input was a greeting, return a greeting response"""
     for word in sentence.words:
-        if word in GREETING_KEYWORDS:
+        if word in config.GREETING_KEYWORDS:
             return random.choice(config.GREETING_RESPONSES)
     return ''
 
 def interpret(text):
     sentence = preprocess_text(text)
-    parsed = TextBlob(cleaned)
+    parsed = TextBlob(sentence)
     print("Input after parsing is {}".format(parsed))
+    print("words: {}".format(parsed.words))
     print("Sentiment of the input is {}".format(parsed.sentiment))
     # pronoun, noun, adjective, verb = find_candidate_parts_of_speech(parsed)
     resp = check_for_greeting(parsed)
@@ -26,7 +27,7 @@ def interpret(text):
     
 if __name__ == '__main__':
     import sys
-    if (len(sys.argv) > 0):
+    if (len(sys.argv) > 1):
         print("sys.argv is {}".format(sys.argv))
         saying = sys.argv[1]
     else:
