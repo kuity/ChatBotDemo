@@ -11,7 +11,7 @@ def preprocess_text(text):
 def is_spam(text):
     if len(text) < config.min_len:
         return True
-    elif len(text) < config.max_len:
+    elif len(text) > config.max_len:
         return True
     words = text.split(' ')
     nonalpha, alpha = 0, 0
@@ -33,6 +33,12 @@ def check_for_greeting(sentence):
             return True
     return False
 
+def check_buy(sentence):
+    return 'buy' in sentence
+
+def check_rec(sentence):
+    return 'recommend' in sentence
+
 def interpret(text):
     resp = []
     sentence = preprocess_text(text)
@@ -53,9 +59,9 @@ def interpret(text):
         resp.append((random.choice(config.RECOMMENDATIONS), config.texttype))
     else:
         pol, subj = parsed.sentiment.polarity, parsed.sentiment.subjectivity
-        if subj > config.sub_threshold and pol > config.pol_threshold:
+        if subj > config.subj_threshold and pol > config.pol_threshold:
             resp.append((config.GFEEDBACK_RESPONSE, config.texttype))
-        elif subj > config.sub_threshold and pol < -config.pol_threshold:
+        elif subj > config.subj_threshold and pol < -config.pol_threshold:
             resp.append((config.BFEEDBACK_RESPONSE, config.texttype))
     return resp
 

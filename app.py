@@ -55,7 +55,6 @@ def webhook():
     return "ok", 200
 
 def gen_resp(rid, text, rtype):
-    assert(rtype in config.resp_types)
     if rtype == 'text':
         return json.dumps({ "recipient": { "id": rid },
                             "message"  : {"text": text}
