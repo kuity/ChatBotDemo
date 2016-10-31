@@ -27,6 +27,7 @@ def interpret(text):
 if __name__ == '__main__':
     import sys
     if (len(sys.argv) > 0):
+        print("sys.argv is {}".format(sys.argv))
         saying = sys.argv[1]
     else:
         print("Error: No input detected")
