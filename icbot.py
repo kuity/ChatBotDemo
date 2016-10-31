@@ -1,6 +1,6 @@
 from __future__ import print_function, unicode_literals
 import random, logging, os, json, config
-os.environ['NLTK_DATA'] = os.getcwd() + '/nltk_data'
+os.environ['NLTK_DATA'] = './nltk_data/'
 from textblob import TextBlob
 
 def preprocess_text(text):
