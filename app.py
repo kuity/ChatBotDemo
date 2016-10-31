@@ -33,7 +33,7 @@ def webhook():
             sender_id = messaging_event["sender"]["id"]
             hasMessage = messaging_event.get("message")
             if hasMessage:
-                hasText = "text" in messaging_event["message"]i
+                hasText = "text" in messaging_event["message"]
             else:
                 hasText = False
             if hasMessage and hasText:
