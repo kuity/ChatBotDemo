@@ -63,8 +63,7 @@ def gen_resp(rid, text, rtype):
                             "message"  : {"text": text}
                           })
     elif rtype == config.buymenu:
-        return json.dumps
-        ({ "recipient": { "id": rid },
+        return json.dumps({ "recipient": { "id": rid },
           "message"  : 
             {"attachment":
                 {"type":"template",
