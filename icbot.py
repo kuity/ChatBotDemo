@@ -5,26 +5,41 @@ from textblob import TextBlob
 
 def preprocess_text(text):
     # 1. Convert all to lowercase for simplicity
-    # 2. Ensure that there is only one sentence
+    # 2. Ensure that there is only one 'sentence'
     return text.lower().replace(".", " ")
 
 def check_for_greeting(sentence):
-    """If any of the words in the user's input was a greeting, return a greeting response"""
     for word in sentence.words:
         if word in config.GREETING_KEYWORDS:
-            return random.choice(config.GREETING_RESPONSES)
-    return ''
+            return True
+    return False
 
 def interpret(text):
+    resp = []
     sentence = preprocess_text(text)
+    if is_spam(sentence):
+        resp.append((config.SPAM_RESPONSE, config.texttype))
+        return resp
+
     parsed = TextBlob(sentence)
     print("Input after parsing is {}".format(parsed))
     print("words: {}".format(parsed.words))
     print("Sentiment of the input is {}".format(parsed.sentiment))
-    # pronoun, noun, adjective, verb = find_candidate_parts_of_speech(parsed)
-    resp = check_for_greeting(parsed)
+
+    if check_for_greeting(parsed) is True:
+        resp.append((random.choice(config.GREETING_RESPONSES), config.texttype))
+    if check_buy(parsed) is True:
+        resp.append(('Showing buy menu', config.buymenu))
+    elif check_rec(parsed) is True:
+        resp.append((random.choice(config.RECOMMENDATIONS), config.texttype))
+    else:
+        pol, subj = parsed.sentiment.polarity, parsed.sentiment.subjectivity
+        if subj > config.sub_threshold and pol > config.pol_threshold:
+            resp.append((config.GFEEDBACK_RESPONSE, config.texttype))
+        elif subj > config.sub_threshold and pol < -config.pol_threshold:
+            resp.append((config.BFEEDBACK_RESPONSE, config.texttype))
     return resp
-    
+
 if __name__ == '__main__':
     import sys
     if (len(sys.argv) > 1):

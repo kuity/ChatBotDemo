@@ -35,19 +35,17 @@ def webhook():
             hasText = "text" in messaging_event["message"]
             if hasMessage and hasText:
                 message_text = messaging_event["message"]["text"]
-                body, resp_type = icbot.interpret(message_text)
-                response = gen_resp(sender_id, body, resp_type)
-                send_message(response)
+                r = icbot.interpret(message_text)
+                for (body, resp_type) in r:
+                    response = gen_resp(sender_id, body, resp_type)
+                    send_message(response)
             elif hasMessage and not hasText:
                 response = gen_resp(sender_id, "Sorry, I don't understand.", "text")
                 send_message(response)
-
             if messaging_event.get("delivery"):
                 pass
-
             if messaging_event.get("optin"):
                 pass
-
             if messaging_event.get("postback"):
                 payload = messaging_event["postback"]["payload"]
                 if 'help' in payload:
@@ -62,7 +60,7 @@ def gen_resp(rid, text, rtype):
         return json.dumps({ "recipient": { "id": rid },
                             "message"  : {"text": text}
                           })
-    elif rtype == 'buy menu 1':
+    elif rtype == config.buymenu:
         return json.dumps
         ({ "recipient": { "id": rid },
           "message"  : 
