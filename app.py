@@ -32,7 +32,10 @@ def webhook():
         for messaging_event in entry["messaging"]:
             sender_id = messaging_event["sender"]["id"]
             hasMessage = messaging_event.get("message")
-            hasText = "text" in messaging_event["message"]
+            if hasMessage:
+                hasText = "text" in messaging_event["message"]i
+            else:
+                hasText = False
             if hasMessage and hasText:
                 message_text = messaging_event["message"]["text"]
                 r = icbot.interpret(message_text)
