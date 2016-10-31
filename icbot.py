@@ -8,6 +8,25 @@ def preprocess_text(text):
     # 2. Ensure that there is only one 'sentence'
     return text.lower().replace(".", " ")
 
+def is_spam(text):
+    if len(text) < config.min_len:
+        return True
+    elif len(text) < config.max_len:
+        return True
+    words = text.split(' ')
+    nonalpha, alpha = 0, 0
+    for word in words:
+        if len(word) > config.max_word_len:
+            return True
+        if word.isalpha():
+            alpha = alpha + 1
+        else:
+            nonalpha = nonalpha + 1
+    if alpha < config.min_alpha or nonalpha > config.max_nonalpha:
+        return True
+
+    return False
+
 def check_for_greeting(sentence):
     for word in sentence.words:
         if word in config.GREETING_KEYWORDS:
