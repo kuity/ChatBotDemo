@@ -2,9 +2,9 @@ from __future__ import print_function
 import os
 import sys
 import json
-
 import requests
 from flask import Flask, request
+import config
 import icbot
 
 app = Flask(__name__)
@@ -20,7 +20,6 @@ def verify():
 
     return "Hello world", 200
 
-
 @app.route('/', methods=['POST'])
 def webhook():
     # endpoint for processing incoming messaging events
@@ -31,14 +30,16 @@ def webhook():
 
     for entry in data["entry"]:
         for messaging_event in entry["messaging"]:
-            if messaging_event.get("message"):
-                sender_id = messaging_event["sender"]["id"]
-                message_text = ''
-                if "text" in messaging_event["message"]:
-                    message_text = messaging_event["message"]["text"]
-                    response = interpret(sender_id, message_text)
-                else:
-                    response = gen_text_resp(sender_id, "Sorry, I don't understand.")
+            sender_id = messaging_event["sender"]["id"]
+            hasMessage = messaging_event.get("message")
+            hasText = "text" in messaging_event["message"]
+            if hasMessage and hasText:
+                message_text = messaging_event["message"]["text"]
+                body, resp_type = icbot.interpret(message_text)
+                response = gen_resp(sender_id, body, resp_type)
+                send_message(response)
+            elif hasMessage and not hasText:
+                response = gen_resp(sender_id, "Sorry, I don't understand.", "text")
                 send_message(response)
 
             if messaging_event.get("delivery"):
@@ -48,48 +49,44 @@ def webhook():
                 pass
 
             if messaging_event.get("postback"):
-                sender_id = messaging_event["sender"]["id"]
                 payload = messaging_event["postback"]["payload"]
                 if 'help' in payload:
-                    response = gen_text_resp(sender_id,payload)
+                    response = gen_resp(sender_id, payload, "text")
                     send_message(response)
 
     return "ok", 200
 
-def interpret(rid, s):
-    if "buy" not in s:
+def gen_resp(rid, text, rtype):
+    assert(rtype in config.resp_types)
+    if rtype == 'text':
         return json.dumps({ "recipient": { "id": rid },
-                            "message"  : {"text": "got it, thanks!"}
-                         })
-    return json.dumps(
-        {"recipient": { "id": rid },
-         "message"  : {
-                "attachment":{
-                    "type":"template",
-                    "payload":{
-                        "template_type":"button",
-                        "text":"What do you want to buy?",
-                        "buttons":[
-                            {
-                              "type":"web_url",
-                              "url":"https://haagendazs.com.sg/flavours/vanilla",
-                              "title":"Vanilla Ice Cream"
-                            },
-                            {
-                              "type":"web_url",
-                              "url":"https://haagendazs.com.sg/flavours/chocolate-ice-cream",
-                              "title":"Chocolate Ice Cream"
-                            }
-                        ]
+                            "message"  : {"text": text}
+                          })
+    elif rtype == 'buy menu 1':
+        return json.dumps
+        ({ "recipient": { "id": rid },
+          "message"  : 
+            {"attachment":
+                {"type":"template",
+                 "payload":
+                    {"template_type":"button",
+                     "text":"What do you want to buy?",
+                     "buttons":
+                        [{
+                          "type":"web_url",
+                          "url":"https://haagendazs.com.sg/flavours/vanilla",
+                          "title":"Vanilla Ice Cream"
+                        },
+                        {
+                          "type":"web_url",
+                          "url":"https://haagendazs.com.sg/flavours/chocolate-ice-cream",
+                          "title":"Chocolate Ice Cream"
+                        }]
                     }
                 }
             }
         })
-
-def gen_text_resp(rid, text):
-    return json.dumps({ "recipient": { "id": rid },
-                        "message"  : {"text": text}
-                      })
+    return 0
 
 def set_greeting():
     params = { "access_token": os.environ["PAGE_ACCESS_TOKEN"] }
