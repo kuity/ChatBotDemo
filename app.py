@@ -8,6 +8,7 @@ import config
 import icbot
 
 app = Flask(__name__)
+conf = []
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -35,7 +36,7 @@ def webhook():
             hasText = "text" in messaging_event["message"]
             if hasMessage and hasText:
                 message_text = messaging_event["message"]["text"]
-                r = icbot.interpret(message_text)
+                r = icbot.interpret(message_text, conf)
                 for (body, resp_type) in r:
                     response = gen_resp(sender_id, body, resp_type)
                     send_message(response)
@@ -130,4 +131,5 @@ def log(message):  # simple wrapper for logging to stdout on heroku
 
 if __name__ == '__main__':
     set_start()
+    conf = icbot.parseConfig()
     app.run(debug=True)
