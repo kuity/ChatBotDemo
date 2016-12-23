@@ -3,6 +3,31 @@ import random, logging, os, json, config
 os.environ['NLTK_DATA'] = './nltk_data/'
 from textblob import TextBlob
 
+class Logic:
+    def __init__(self, cond, keyword, ncond, resp):
+        self.condition = cond
+        self.ncondition = ncond
+        self.keyword = keyword
+        self.response = response
+    def prn(self):
+        print ('Condition: {}, Keyword: {}, New Condition: {}, Response: {}'.format(
+                    self.condition,
+                    self.keyword,
+                    self.ncondition,
+                    self.response))
+
+def parseConfig():
+    inp = config.input
+    parsedConfig = []
+    with open(inp, 'r') as f:
+        for line in f:
+            tokens = line.strip().split(config.conf_delimiter)
+            parsedConfig.append(Logic(tokens[1], tokens[0], tokens[2], tokens[3]))
+
+    for c in parsedConfig:
+        c.prn()
+    return parsedConfig
+
 def preprocess_text(text):
     # 1. Convert all to lowercase for simplicity
     # 2. Ensure that there is only one 'sentence'
@@ -39,7 +64,7 @@ def check_buy(sentence):
 def check_rec(sentence):
     return 'recommend' in sentence
 
-def interpret(text):
+def interpret(text, conf):
     resp = []
     sentence = preprocess_text(text)
     if is_spam(sentence):
@@ -67,10 +92,11 @@ def interpret(text):
 
 if __name__ == '__main__':
     import sys
+    c = parseConfig()
     if (len(sys.argv) > 1):
         print("sys.argv is {}".format(sys.argv))
         saying = sys.argv[1]
     else:
         print("Error: No input detected")
         sys.exit(1)
-    print(interpret(saying))
+    print(interpret(saying, c))

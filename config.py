@@ -20,3 +20,7 @@ RECOMMENDATIONS = ["How about a fruity raspberry sorbet?",
                     "What do you think about some fragrant green tea ice-cream?",
                     "A scoop of blueberries-and-cream ice cream is perfect for the hot weather!",
                     "A taste of our Belgian Chocolate ice cream is sure to sweeten up your day!"]
+
+# Superior version 2 using Config file
+input = 'intents_keywords_v2.txt'
+conf_delimiter = '|'
