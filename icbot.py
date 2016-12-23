@@ -8,7 +8,7 @@ class Logic:
         self.condition = cond
         self.ncondition = ncond
         self.keyword = keyword
-        self.response = response
+        self.response = resp
     def prn(self):
         print ('Condition: {}, Keyword: {}, New Condition: {}, Response: {}'.format(
                     self.condition,
@@ -58,7 +58,7 @@ def check_for_greeting(sentence):
             return True
     return False
 
-def interpret(text, conf):
+def interpret(text, conf, state):
     resp = []
     sentence = preprocess_text(text)
     if is_spam(sentence):
@@ -70,19 +70,13 @@ def interpret(text, conf):
     print("words: {}".format(parsed.words))
     print("Sentiment of the input is {}".format(parsed.sentiment))
 
-    if check_for_greeting(parsed) is True:
-        resp.append((random.choice(config.GREETING_RESPONSES), config.texttype))
-    if check_buy(parsed) is True:
-        resp.append(('Showing buy menu', config.buymenu))
-    elif check_rec(parsed) is True:
-        resp.append((random.choice(config.RECOMMENDATIONS), config.texttype))
-    else:
-        pol, subj = parsed.sentiment.polarity, parsed.sentiment.subjectivity
-        if subj > config.sub_threshold and pol > config.pol_threshold:
-            resp.append((config.GFEEDBACK_RESPONSE, config.texttype))
-        elif subj > config.sub_threshold and pol < -config.pol_threshold:
-            resp.append((config.BFEEDBACK_RESPONSE, config.texttype))
-    return resp
+    for l in conf:
+        if state != l.condition:
+            continue
+        if l.keyword in parsed.words:
+            return (l.response, l.ncondition)
+
+    return (config.default_response, config.default_state)
 
 if __name__ == '__main__':
     import sys

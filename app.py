@@ -9,6 +9,7 @@ import icbot
 
 app = Flask(__name__)
 conf = []
+state = config.default_state
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -36,7 +37,7 @@ def webhook():
             hasText = "text" in messaging_event["message"]
             if hasMessage and hasText:
                 message_text = messaging_event["message"]["text"]
-                r = icbot.interpret(message_text, conf)
+                (r, state) = icbot.interpret(message_text, conf, state)
                 for (body, resp_type) in r:
                     response = gen_resp(sender_id, body, resp_type)
                     send_message(response)
@@ -57,7 +58,7 @@ def webhook():
 
 def gen_resp(rid, text, rtype):
     assert(rtype in config.resp_types)
-    if rtype == 'text':
+    if rtype == config.texttype:
         return json.dumps({ "recipient": { "id": rid },
                             "message"  : {"text": text}
                           })
