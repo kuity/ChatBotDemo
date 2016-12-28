@@ -1,4 +1,4 @@
-buymenu = "buy menu"
+buymenu = "menu"
 texttype = 'text'
 FAQtext = ("Try entering one of these words:\n"
     "recommend\n"
@@ -24,5 +24,6 @@ RECOMMENDATIONS = ["How about a fruity raspberry sorbet?",
 # Superior version 2 using Config file
 input = 'intents_keywords_v2.txt'
 conf_delimiter = '|'
+menu_delimiter = ','
 default_state = 'null'
 default_response = "Sorry, I don't understand. Please try again."

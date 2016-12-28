@@ -4,16 +4,18 @@ os.environ['NLTK_DATA'] = './nltk_data/'
 from textblob import TextBlob
 
 class Logic:
-    def __init__(self, cond, keyword, ncond, resp):
+    def __init__(self, cond, keyword, ncond, optype, resp):
         self.condition = cond
         self.ncondition = ncond
         self.keyword = keyword
+        self.optype = optype            
         self.response = resp
     def prn(self):
-        print ('Condition: {}, Keyword: {}, New Condition: {}, Response: {}'.format(
+        print ('Condition: {}, Keyword: {}, New Condition: {}, Response Type: {},  Response: {}'.format(
                     self.condition,
                     self.keyword,
                     self.ncondition,
+                    self.optype,
                     self.response))
 
 def parseConfig():
@@ -22,7 +24,18 @@ def parseConfig():
     with open(inp, 'r') as f:
         for line in f:
             tokens = line.strip().split(config.conf_delimiter)
-            parsedConfig.append(Logic(tokens[1], tokens[0], tokens[2], tokens[3]))
+            optype = tokens[3]
+            if optype == config.buymenu:
+                title = tokens[4]
+                mlen = len(tokens)
+                moptions = []
+                for index in range(5, mlen):
+                    print(index)
+                    moptions.append(tokens[index].split(config.menu_delimiter))
+                resp = (title, moptions)
+                parsedConfig.append(Logic(tokens[1], tokens[0], tokens[2], tokens[3], resp))
+            else:
+                parsedConfig.append(Logic(tokens[1], tokens[0], tokens[2], tokens[3], tokens[4]))
 
     for c in parsedConfig:
         c.prn()
@@ -49,13 +62,6 @@ def is_spam(text):
             nonalpha = nonalpha + 1
     if alpha < config.min_alpha or nonalpha > config.max_nonalpha:
         return True
-
-    return False
-
-def check_for_greeting(sentence):
-    for word in sentence.words:
-        if word in config.GREETING_KEYWORDS:
-            return True
     return False
 
 def interpret(text, conf, state):
@@ -74,9 +80,9 @@ def interpret(text, conf, state):
         if state != l.condition:
             continue
         if l.keyword in parsed.words:
-            return (l.response, l.ncondition)
+            return (l.optype, l.response, l.ncondition)
 
-    return (config.default_response, config.default_state)
+    return (config.texttype, config.default_response, config.default_state)
 
 if __name__ == '__main__':
     import sys
@@ -87,4 +93,4 @@ if __name__ == '__main__':
     else:
         print("Error: No input detected")
         sys.exit(1)
-    print(interpret(saying, c))
+    print(interpret(saying, c, 'null'))

@@ -40,10 +40,9 @@ def webhook():
                 hasText = False
             if hasMessage and hasText:
                 message_text = messaging_event["message"]["text"]
-                (r, state) = icbot.interpret(message_text, conf, state)
-                for (body, resp_type) in r:
-                    response = gen_resp(sender_id, body, resp_type)
-                    send_message(response)
+                (rtype, output, state) = icbot.interpret(message_text, conf, state)
+                response = gen_resp(sender_id, output, rtype)
+                send_message(response)
             elif hasMessage and not hasText:
                 response = gen_resp(sender_id, "Sorry, I don't understand.", "text")
                 send_message(response)
@@ -59,32 +58,27 @@ def webhook():
 
     return "ok", 200
 
-def gen_resp(rid, text, rtype):
+def gen_resp(rid, output, rtype):
     assert(rtype in config.resp_types)
     if rtype == config.texttype:
         return json.dumps({ "recipient": { "id": rid },
                             "message"  : {"text": text}
                           })
-    elif rtype == config.buymenu:
+    elif rtype == config.menu:
         return json.dumps({ "recipient": { "id": rid },
           "message"  : 
             {"attachment":
                 {"type":"template",
                  "payload":
                     {"template_type":"button",
-                     "text":"What do you want to buy?",
+                     "text":output[0],
                      "buttons":
                         [{
-                          "type":"web_url",
-                          "url":"https://haagendazs.com.sg/flavours/vanilla",
-                          "title":"Vanilla Ice Cream"
-                        },
-                        {
-                          "type":"web_url",
-                          "url":"https://haagendazs.com.sg/flavours/chocolate-ice-cream",
-                          "title":"Chocolate Ice Cream"
-                        }]
-                    }
+                          "type":"postback",
+                          "title":t,
+                          "payload":pl
+                         } for [t, pl] in output[1]]
+                    } 
                 }
             }
         })
