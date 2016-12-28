@@ -8,7 +8,7 @@ class Logic:
         self.condition = cond
         self.ncondition = ncond
         self.keyword = keyword
-        self.response = response
+        self.response = resp
     def prn(self):
         print ('Condition: {}, Keyword: {}, New Condition: {}, Response: {}'.format(
                     self.condition,
