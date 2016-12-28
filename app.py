@@ -8,8 +8,6 @@ import config
 import icbot
 
 app = Flask(__name__)
-conf = []
-state = config.default_state
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -25,6 +23,8 @@ def verify():
 @app.route('/', methods=['POST'])
 def webhook():
     # endpoint for processing incoming messaging events
+    global conf
+    global state
     data = request.get_json()
     log(data)
     if data["object"] != "page":
@@ -128,6 +128,8 @@ def log(message):  # simple wrapper for logging to stdout on heroku
 
 if __name__ == '__main__':
     set_start()
+    global conf
+    global state
     conf = icbot.parseConfig()
     state = 'null'
     app.run(debug=True)
