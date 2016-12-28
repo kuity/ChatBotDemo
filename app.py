@@ -7,6 +7,8 @@ from flask import Flask, request
 import config
 import icbot
 
+conf = icbot.parseConfig()
+state = 'null'
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
@@ -128,8 +130,4 @@ def log(message):  # simple wrapper for logging to stdout on heroku
 
 if __name__ == '__main__':
     set_start()
-    global conf
-    global state
-    conf = icbot.parseConfig()
-    state = 'null'
     app.run(debug=True)
