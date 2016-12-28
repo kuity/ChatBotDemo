@@ -129,4 +129,5 @@ def log(message):  # simple wrapper for logging to stdout on heroku
 if __name__ == '__main__':
     set_start()
     conf = icbot.parseConfig()
+    state = 'null'
     app.run(debug=True)
