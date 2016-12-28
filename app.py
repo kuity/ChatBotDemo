@@ -63,7 +63,7 @@ def webhook():
 def gen_resp(rid, output, rtype):
     if rtype == config.texttype:
         return json.dumps({ "recipient": { "id": rid },
-                            "message"  : {"text": text}
+                            "message"  : {"text": output}
                           })
     elif rtype == config.menu:
         return json.dumps({ "recipient": { "id": rid },
