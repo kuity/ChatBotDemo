@@ -67,8 +67,8 @@ def is_spam(text):
 def interpret(text, conf, state):
     resp = []
     sentence = preprocess_text(text)
-    if is_spam(sentence):
-        return (config.texttype, config.default_response, config.default_state)
+    #if is_spam(sentence):
+    #    return (config.texttype, config.default_response, config.default_state)
 
     parsed = TextBlob(sentence)
     print("Input after parsing is {}".format(parsed))
