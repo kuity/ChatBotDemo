@@ -1,6 +1,6 @@
 hello|null|null|text|hello
 hi|null|null|text|hi
-buy|null|toBuy|menu|Please select a phone|Iphone 7 Rose Gold (32gb),menu1_phonepurchase_iphone7777777rosegold32gb|Iphone 7 Rose Gold (128gb),menu1_phonepurchase_iphone7rosegold128gb|Samsung S7 Edge,menu1_phonepurchase_samsungs7edge
+buy|null|toBuy|menu|Please select a phone|Iphone 7 Rose Gold (32gb),menu1_phonepurchase_iphone7rosegold32gb|Iphone 7 Rose Gold (128gb),menu1_phonepurchase_iphone7rosegold128gb|Samsung S7 Edge,menu1_phonepurchase_samsungs7edge
 menu1_phonepurchase_iphone7rosegold32gb|toBuy|null|text|Please visit this link for the price plan for Iphone 7 (Rose Gold) (32gb): https://www.m1.com.sg/personal/mobile/phones/details/iphone%207%2032gb%20rose%20gold
 menu1_phonepurchase_iphone7rosegold128gb|toBuy|null|text|Please visit this link for the price plan for Iphone 7 (Rose Gold) (128gb): https://www.m1.com.sg/personal/mobile/phones/details/iphone%207%20plus%20128gb%20rose%20gold
 menu1_phonepurchase_samsungs7edge|toBuy|null|text|Please visit this link for the price plan for Samsung S7 Edge: https://www.m1.com.sg/personal/mobile/phones/details/samsung%20galaxy%20s7%20edge%204g%2032gb%20gold
