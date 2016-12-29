@@ -25,8 +25,6 @@ def verify():
 @app.route('/', methods=['POST'])
 def webhook():
     # endpoint for processing incoming messaging events
-    global conf
-    global state
     data = request.get_json()
     log(data)
     if data["object"] != "page":
@@ -34,6 +32,9 @@ def webhook():
 
     for entry in data["entry"]:
         for messaging_event in entry["messaging"]:
+            global conf
+            global state
+            log("current state is {}".format(state))
             sender_id = messaging_event["sender"]["id"]
             hasMessage = messaging_event.get("message")
             if hasMessage:
