@@ -34,7 +34,6 @@ def webhook():
         for messaging_event in entry["messaging"]:
             global conf
             global state
-            log("current state is {}".format(state))
             sender_id = messaging_event["sender"]["id"]
             hasMessage = messaging_event.get("message")
             if hasMessage:
@@ -43,9 +42,11 @@ def webhook():
                 hasText = False
             if hasMessage and hasText:
                 message_text = messaging_event["message"]["text"]
+                log("Submitting for analysis: current state is {}".format(state))
                 (rtype, output, s) = icbot.interpret(message_text, conf, state)
                 log("bot response: {}, {}, {}".format(rtype, output, s))
                 state = s
+                log("After modication, current state is {}".format(state))
                 response = gen_resp(sender_id, output, rtype)
                 send_message(response)
             elif hasMessage and not hasText:
@@ -57,9 +58,11 @@ def webhook():
                 pass
             if messaging_event.get("postback"):
                 payload = messaging_event["postback"]["payload"]
+                log("Submitting for analysis: current state is {}".format(state))
                 (rtype, output, s) = icbot.interpret(payload, conf, state)
                 log("bot response: {}, {}, {}".format(rtype, output, s))
                 state = s
+                log("After modication, current state is {}".format(state))
                 response = gen_resp(sender_id, output, rtype)
                 send_message(response) 
     return "ok", 200
