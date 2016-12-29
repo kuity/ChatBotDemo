@@ -71,6 +71,7 @@ def interpret(text, conf, state):
     #    return (config.texttype, config.default_response, config.default_state)
 
     parsed = TextBlob(sentence)
+    print("Current state is {}".format(state))
     print("Input after parsing is {}".format(parsed))
     print("words: {}".format(parsed.words))
     print("Sentiment of the input is {}".format(parsed.sentiment))
