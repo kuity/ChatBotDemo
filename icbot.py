@@ -60,7 +60,7 @@ def is_spam(text):
             alpha = alpha + 1
         else:
             nonalpha = nonalpha + 1
-    if alpha < config.min_alpha or nonalpha > config.max_nonalpha:
+    if nonalpha > config.max_nonalpha:
         return True
     return False
 
