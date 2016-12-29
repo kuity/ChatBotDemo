@@ -9,7 +9,7 @@ min_len = 2
 max_len = 200
 max_word_len = 80
 min_alpha = 1
-max_nonalpha = 5
+max_nonalpha = 20
 
 GREETING_KEYWORDS = ("hello", "hi", "greetings", "sup", "what's up", "hey")
 GREETING_RESPONSES = ["HELLO!", "Hey!", "Greetings"]
