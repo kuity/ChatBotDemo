@@ -54,10 +54,9 @@ def webhook():
                 pass
             if messaging_event.get("postback"):
                 payload = messaging_event["postback"]["payload"]
-                if 'help' in payload:
-                    response = gen_resp(sender_id, payload, "text")
-                    send_message(response)
-
+                (rtype, output, state) = icbot.interpret(payload, conf, state)
+                response = gen_resp(sender_id, output, rtype)
+                send_message(response) 
     return "ok", 200
 
 def gen_resp(rid, output, rtype):
