@@ -42,7 +42,9 @@ def webhook():
                 hasText = False
             if hasMessage and hasText:
                 message_text = messaging_event["message"]["text"]
-                (rtype, output, state) = icbot.interpret(message_text, conf, state)
+                (rtype, output, s) = icbot.interpret(message_text, conf, state)
+                log("bot response: {}, {}, {}".format(rtype, output, s))
+                state = s
                 response = gen_resp(sender_id, output, rtype)
                 send_message(response)
             elif hasMessage and not hasText:
@@ -54,7 +56,9 @@ def webhook():
                 pass
             if messaging_event.get("postback"):
                 payload = messaging_event["postback"]["payload"]
-                (rtype, output, state) = icbot.interpret(payload, conf, state)
+                (rtype, output, s) = icbot.interpret(payload, conf, state)
+                log("bot response: {}, {}, {}".format(rtype, output, s))
+                state = s
                 response = gen_resp(sender_id, output, rtype)
                 send_message(response) 
     return "ok", 200
