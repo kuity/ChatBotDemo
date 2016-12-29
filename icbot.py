@@ -25,7 +25,7 @@ def parseConfig():
         for line in f:
             tokens = line.strip().split(config.conf_delimiter)
             optype = tokens[3]
-            if optype == config.buymenu:
+            if optype == config.menu:
                 title = tokens[4]
                 mlen = len(tokens)
                 moptions = []
