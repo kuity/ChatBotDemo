@@ -7,7 +7,7 @@ subj_threshold = 0.1
 pol_threshold = 0.1
 min_len = 2
 max_len = 200
-max_word_len = 20
+max_word_len = 80
 min_alpha = 1
 max_nonalpha = 5
 
