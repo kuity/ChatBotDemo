@@ -1,4 +1,4 @@
-buymenu = "menu"
+menu = "menu"
 texttype = 'text'
 FAQtext = ("Try entering one of these words:\n"
     "recommend\n"
